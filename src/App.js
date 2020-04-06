@@ -1,6 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import ApolloClient from "apollo-boost";
+
+//import { ApolloProvider } from "react-apollo";
+import { ApolloProvider } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
+import { render } from 'react-dom';
+// import gql from 'graphql-tag';
+import { gql } from "apollo-boost";
 
 function App() {
   return (
