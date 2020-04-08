@@ -13,65 +13,92 @@ import { Query } from "react-apollo";
 
 import { useQuery } from '@apollo/react-hooks';
 
-// const client = new ApolloClient({
-//   uri: 'http://localhost:5000/graphql',
-// });
-
 const client = new ApolloClient({
-  uri: 'https://48p1r2roz4.sse.codesandbox.io'
+  uri: 'http://localhost:5000/graphql',
 });
 
-client
-.query({
-  query: gql`
-    {
-      rates(currency: "USD") {
-        currency
-      }
-    }
-  `
-})
-.then(result => console.log(result));
+// const client = new ApolloClient({
+//   uri: 'https://48p1r2roz4.sse.codesandbox.io'
+// });
 
-const EXCHANGE_RATES = gql`
-  {
-    rates(currency: "USD") {
-      currency
-      rate
-    }
-  }
-`;
+// client
+// .query({
+//   query: gql`
+//     {
+//       rates(currency: "USD") {
+//         currency
+//       }
+//     }
+//   `
+// })
+// .then(result => console.log(result));
+
+// const EXCHANGE_RATES = gql`
+//   {
+//     rates(currency: "USD") {
+//       currency
+//       rate
+//     }
+//   }
+// `;
 
 const GET_TILES = gql`
 {
   getTiles {
     data {
       id
+      attributes {
+        name
+        url
+        currentTileUrl
+      }
     }
   }
 }
 `;
 
-function ExchangeRates() {
-  const { loading, error, data } = useQuery(EXCHANGE_RATES);
+// function ExchangeRates() {
+//   const { loading, error, data } = useQuery(EXCHANGE_RATES);
 
+//   if (loading) return <p>Loading...</p>;
+//   if (error) return <p>Error :(</p>;
+
+//   return data.rates.map(({ currency, rate }) => (
+//     <div key={currency}>
+//       <p>
+//         {currency}: {rate}
+//       </p>
+//     </div>
+//   ));
+// }
+
+function GetTiles() {
+  const { loading, error, data } = useQuery(GET_TILES);
+  document.write("<style> table { font-family: arial, sans-serif; border-collapse: collapse; width: 100%; } td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; } tr:nth-child(even) { background-color: #dddddd; } </style>");
+  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  return data.rates.map(({ currency, rate }) => (
-    <div key={currency}>
-      <p>
-        {currency}: {rate}
-      </p>
-    </div>
-  ));
+  const Items = data.getTiles.data;
+  var html = "<table><tr><th>ID</th><th>Shop Name</th><th>Shop Logo</th></tr>";
+
+  for (var i = 0; i < Items.length; i++) {
+    html += "<tr>";
+    html += "<th>" + (Items[i].id) + "</th>";
+    html += "<th><a href=" + (Items[i].attributes.url) + " target='_blank' >" + (Items[i].attributes.name) + "</a></th>"
+    html += "<th><a href=" + (Items[i].attributes.url) + " target='_blank' ><img src=" + (Items[i].attributes.currentTileUrl) + " alt='Logo' height='100' width='140'></a></th>";
+    html += "</tr>";
+  }
+  html += "</table>";
+  document.write(html);
+  return html;
 }
 
 const App = () => (
   <ApolloProvider client={client}>
     <div>
       <h2>My first Apollo app 🚀</h2>
-      <ExchangeRates />
+      <GetTiles />
     </div>
   </ApolloProvider>
 );
